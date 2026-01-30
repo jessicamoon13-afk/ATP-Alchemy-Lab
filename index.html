@@ -1,16 +1,1328 @@
-<div style="width:100%; max-width:1180px; margin:0 auto;">
-  <iframe
-    src="https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/"
-    style="width:100%; height:900px; border:1px solid #ddd; border-radius:16px;"
-    title="ATP Alchemy Lab: Sprint Shift"
-    loading="lazy"
-    allowfullscreen>
-  </iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ATP Alchemy Lab: Sprint Shift</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <div style="margin-top:10px; font-size:14px;">
-    If the game does not display well in Canvas, open it in a new tab:
-    <a href="https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/" target="_blank" rel="noopener noreferrer">
-      Open the game
-    </a>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --border: rgba(255,255,255,0.14);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.72);
+
+      --gold:#c9b037;
+      --good:#45d483;
+      --bad:#ff6b6b;
+      --warn:#ffcc66;
+
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.08);
+      --shadow: 0 22px 52px rgba(0,0,0,0.45);
+      --radius: 18px;
+
+      --btn: rgba(255,255,255,0.08);
+      --btnHover: rgba(255,255,255,0.13);
+
+      --solidModal:#101426;
+      --solidModal2:#161b3a;
+      --solidModal3:#1c2250;
+    }
+
+    *{ box-sizing: border-box; }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 20% 0%, #1a2452 0%, var(--bg1) 48%, #070a14 100%);
+      min-height:100vh;
+      padding: 18px;
+    }
+
+    .wrap{ max-width: 1180px; margin: 0 auto; }
+
+    .top{
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size: 24px;
+      letter-spacing: -0.4px;
+    }
+
+    .sub{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      max-width: 900px;
+    }
+
+    .bar{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      padding: 9px 12px;
+      border-radius: 999px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size: 13px;
+    }
+    .pill strong{ color: white; font-weight: 900; }
+
+    .btn{
+      border:1px solid var(--border);
+      background: var(--btn);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      user-select:none;
+    }
+    .btn:hover{ background: var(--btnHover); }
+    .btn.primary{
+      background: rgba(201,176,55,0.92);
+      color: #0b1020;
+      border-color: rgba(201,176,55,0.85);
+    }
+    .btn.primary:hover{ background: rgba(201,176,55,1); }
+    .btn:disabled{
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 12px;
+    }
+    @media (max-width: 1000px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panelHeader{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .panelHeader h2{
+      margin:0;
+      font-size: 15px;
+      letter-spacing: -0.2px;
+      color: rgba(255,255,255,0.95);
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    .tag{
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .panelBody{ padding: 14px 16px 16px; }
+
+    .row{ display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+
+    .helpWrap{
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.22);
+      border-radius: 16px;
+      padding: 10px 12px;
+      display:none;
+    }
+    .instruction{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .status{
+      margin-top: 12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      border-radius: 16px;
+      padding: 10px 12px;
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+      line-height: 1.4;
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:flex-start;
+      min-height: 56px;
+    }
+    .status.good{ border-color: rgba(69,212,131,0.45); background: rgba(69,212,131,0.12); }
+    .status.bad{ border-color: rgba(255,107,107,0.55); background: rgba(255,107,107,0.12); }
+    .status.warn{ border-color: rgba(255,204,102,0.50); background: rgba(255,204,102,0.12); }
+    .status .mini{
+      color: rgba(255,255,255,0.70);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .labGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .meters{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 700px){
+      .meters{ grid-template-columns: 1fr; }
+    }
+
+    .meterCard{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      border-radius: 18px;
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .meterTitle{
+      display:flex;
+      align-items:baseline;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .meterTitle .k{
+      font-weight: 950;
+      font-size: 13px;
+      color: rgba(255,255,255,0.95);
+    }
+    .meterTitle .v{
+      font-weight: 950;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .barWrap{
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .barFill{
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 120ms linear;
+    }
+
+    .barFill.atp{ background: rgba(69,212,131,0.95); }
+    .barFill.atp.mid{ background: rgba(255,204,102,0.95); }
+    .barFill.atp.low{ background: rgba(255,107,107,0.95); }
+    .barFill.pcr{ background: rgba(201,176,55,0.95); }
+
+    .inventory{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 700px){
+      .inventory{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .invItem{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 10px 10px;
+      position: relative;
+      overflow:hidden;
+    }
+    .invItem .name{
+      font-weight: 950;
+      font-size: 12px;
+      color: rgba(255,255,255,0.90);
+      margin-bottom: 3px;
+    }
+    .invItem .count{
+      font-weight: 950;
+      font-size: 16px;
+      color: rgba(255,255,255,0.95);
+    }
+    .invItem .hint{
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+      line-height: 1.25;
+    }
+
+    .tools{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .tool{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      border-radius: 18px;
+      padding: 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .tool .left{
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tool .tname{
+      font-weight: 950;
+      color: rgba(255,255,255,0.95);
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .chip{
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.16);
+      color: rgba(255,255,255,0.74);
+      font-weight: 900;
+    }
+    .chip.gold{ border-color: rgba(201,176,55,0.55); color: rgba(201,176,55,0.98); }
+    .chip.good{ border-color: rgba(69,212,131,0.45); color: rgba(69,212,131,0.96); }
+    .chip.bad{ border-color: rgba(255,107,107,0.55); color: rgba(255,107,107,0.96); }
+
+    .tool .tmeta{
+      font-size: 12px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.35;
+      max-width: 520px;
+    }
+
+    .tool .right{
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items:flex-end;
+      min-width: 140px;
+    }
+
+    .cool{
+      font-size: 12px;
+      color: rgba(255,255,255,0.70);
+      white-space: nowrap;
+    }
+
+    .spark{
+      position:absolute;
+      inset: 0;
+      pointer-events:none;
+      opacity: 0;
+      background: radial-gradient(400px 220px at 20% 0%, rgba(201,176,55,0.20), transparent 60%),
+                  radial-gradient(420px 240px at 80% 40%, rgba(69,212,131,0.16), transparent 65%);
+      transition: opacity 180ms ease;
+    }
+    .meterCard.pop .spark,
+    .invItem.pop .spark{
+      opacity: 1;
+    }
+
+    .shake{
+      animation: shake 140ms linear;
+    }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      25%{ transform: translateX(-3px); }
+      50%{ transform: translateX(3px); }
+      75%{ transform: translateX(-2px); }
+      100%{ transform: translateX(0); }
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.94);
+      font-size: 13px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+      z-index: 60;
+      display:none;
+      max-width: min(760px, 92vw);
+    }
+    .toast.show{ display:block; }
+
+    /* Solid end modal */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 80;
+    }
+    .overlay.show{ display:flex; }
+
+    .modal{
+      width: min(920px, 100%);
+      max-height: 86vh;
+      background: var(--solidModal);
+      border-radius: 22px;
+      border: 1px solid #2a2f55;
+      box-shadow: 0 35px 90px rgba(0,0,0,0.9);
+      overflow: hidden;
+      animation: popIn 180ms ease-out;
+    }
+    @keyframes popIn{
+      from{ transform: scale(0.96); opacity: 0; }
+      to{ transform: scale(1); opacity: 1; }
+    }
+
+    .modalHeader{
+      padding: 18px 20px;
+      background: #0b1020;
+      border-bottom: 1px solid #2a2f55;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .modalHeader h3{
+      margin:0;
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+    .modalBody{
+      padding: 18px 20px 20px;
+      overflow-y: auto;
+      color: #ffffff;
+    }
+    .summaryGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 760px){
+      .summaryGrid{ grid-template-columns: 1fr; }
+    }
+    .sumCard{
+      background: var(--solidModal2);
+      border: 1px solid #2f3566;
+      border-radius: 18px;
+      padding: 12px 14px;
+    }
+    .sumCard .k{ font-size: 12px; color: rgba(255,255,255,0.75); }
+    .sumCard .v{ font-weight: 950; font-size: 18px; margin-top: 2px; }
+    .sumCard .v.good{ color: var(--good); }
+    .sumCard .v.bad{ color: var(--bad); }
+    .sumCard .v.gold{ color: rgba(201,176,55,0.98); }
+    .line{
+      margin-top: 12px;
+      background: var(--solidModal3);
+      border: 1px solid #353c7a;
+      border-radius: 18px;
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.90);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .kbd{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.28);
+      font-size: 11px;
+      color: rgba(255,255,255,0.78);
+      font-weight: 900;
+      margin: 0 2px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toast" id="toast"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>ATP Alchemy Lab: Sprint Shift</h1>
+        <div class="sub">
+          Overcooked-style practice. ATP is always draining. Use enzymes like tools to keep ATP alive for a short burst.
+          This is ungraded and replayable.
+        </div>
+      </div>
+
+      <div class="bar">
+        <div class="pill"><strong>Level</strong> <span id="levelVal">1</span></div>
+        <div class="pill"><strong>Time</strong> <span id="timeVal">0.0</span>s</div>
+        <div class="pill"><strong>Work</strong> <span id="workVal">0</span></div>
+
+        <button class="btn" id="helpBtn">Help</button>
+        <button class="btn" id="soundBtn">Sound: On</button>
+        <button class="btn" id="resetBtn">Reset</button>
+        <button class="btn primary" id="startBtn">Start</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHeader">
+          <h2>
+            Lab bench
+            <span class="tag" id="goalTag">Goal: survive 10.0s</span>
+            <span class="tag" id="modeTag">Intro Burst</span>
+          </h2>
+
+          <div class="row">
+            <button class="btn" id="lvl1Btn">Level 1</button>
+            <button class="btn" id="lvl2Btn">Level 2</button>
+            <button class="btn" id="lvl3Btn">Level 3</button>
+          </div>
+        </div>
+
+        <div class="panelBody">
+          <div class="helpWrap" id="helpWrap">
+            <div class="instruction">
+              You are simulating maximal effort. ATP drains continuously.
+              Use enzyme tools to manage substrates:
+              <br><span class="kbd">Creatine kinase</span> uses PCr + ADP to regenerate ATP.
+              <br><span class="kbd">Adenylate kinase</span> uses 2 ADP to regenerate ATP (but makes AMP).
+              <br><span class="kbd">ATP hydrolase</span> increases work (represents contraction) but drains ATP faster.
+              <br>Keyboard: <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> change level, <span class="kbd">Space</span> start, <span class="kbd">R</span> reset.
+            </div>
+          </div>
+
+          <div class="labGrid">
+            <div class="meters">
+              <div class="meterCard" id="atpCard">
+                <div class="spark"></div>
+                <div class="meterTitle">
+                  <div class="k">ATP vial</div>
+                  <div class="v"><span id="atpNum">0</span> / <span id="atpMaxNum">0</span></div>
+                </div>
+                <div class="barWrap">
+                  <div class="barFill atp" id="atpBar"></div>
+                </div>
+              </div>
+
+              <div class="meterCard" id="pcrCard">
+                <div class="spark"></div>
+                <div class="meterTitle">
+                  <div class="k">PCr crystals</div>
+                  <div class="v"><span id="pcrNum">0</span> / <span id="pcrMaxNum">0</span></div>
+                </div>
+                <div class="barWrap">
+                  <div class="barFill pcr" id="pcrBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="inventory">
+              <div class="invItem" id="invATP">
+                <div class="spark"></div>
+                <div class="name">ATP</div>
+                <div class="count" id="invATPNum">0</div>
+                <div class="hint">Fuel for work</div>
+              </div>
+              <div class="invItem" id="invADP">
+                <div class="spark"></div>
+                <div class="name">ADP</div>
+                <div class="count" id="invADPNum">0</div>
+                <div class="hint">Builds up fast</div>
+              </div>
+              <div class="invItem" id="invPi">
+                <div class="spark"></div>
+                <div class="name">Pi</div>
+                <div class="count" id="invPiNum">0</div>
+                <div class="hint">Byproduct</div>
+              </div>
+              <div class="invItem" id="invCr">
+                <div class="spark"></div>
+                <div class="name">Cr</div>
+                <div class="count" id="invCrNum">0</div>
+                <div class="hint">From PCr use</div>
+              </div>
+              <div class="invItem" id="invAMP">
+                <div class="spark"></div>
+                <div class="name">AMP</div>
+                <div class="count" id="invAMPNum">0</div>
+                <div class="hint">From 2 ADP</div>
+              </div>
+            </div>
+
+            <div class="tools">
+              <div class="tool" id="toolHydrolase">
+                <div class="left">
+                  <div class="tname">ATP hydrolase <span class="chip bad">WORK</span></div>
+                  <div class="tmeta">
+                    Uses ATP to produce work. In this game, clicking it increases Work but costs ATP faster.
+                    Use it when you have ATP available.
+                  </div>
+                </div>
+                <div class="right">
+                  <button class="btn" id="hydrolaseBtn">Use</button>
+                  <div class="cool" id="hydrolaseCool">Ready</div>
+                </div>
+              </div>
+
+              <div class="tool" id="toolCK">
+                <div class="left">
+                  <div class="tname">Creatine kinase <span class="chip gold">PCr</span> <span class="chip good">ATP regen</span></div>
+                  <div class="tmeta">
+                    PCr + ADP becomes ATP + Cr. This is the rapid backup system.
+                  </div>
+                </div>
+                <div class="right">
+                  <button class="btn" id="ckBtn">Use</button>
+                  <div class="cool" id="ckCool">Ready</div>
+                </div>
+              </div>
+
+              <div class="tool" id="toolAK">
+                <div class="left">
+                  <div class="tname">Adenylate kinase <span class="chip gold">2 ADP</span> <span class="chip good">ATP regen</span></div>
+                  <div class="tmeta">
+                    2 ADP becomes ATP + AMP. Helps briefly, but creates AMP.
+                    Unlocked in Level 2.
+                  </div>
+                </div>
+                <div class="right">
+                  <button class="btn" id="akBtn">Use</button>
+                  <div class="cool" id="akCool">Locked</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="status warn" id="statusBox">
+              <div id="statusMsg">Choose a level and click Start. Expect chaos.</div>
+              <div class="mini" id="miniMsg">Tip: PCr is limited. That is the whole point.</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHeader">
+          <h2>Shift notes <span class="tag">Overcooked rules</span></h2>
+        </div>
+        <div class="panelBody">
+          <div class="instruction" style="color: rgba(255,255,255,0.78);">
+            <div style="font-weight:950; margin-bottom: 6px; color: rgba(255,255,255,0.92);">How to win (briefly)</div>
+            <ul style="margin: 0; padding-left: 18px;">
+              <li>ATP drains continuously during maximal effort.</li>
+              <li>Creatine kinase buys time by using PCr to regenerate ATP.</li>
+              <li>Adenylate kinase is another backup: 2 ADP becomes ATP + AMP.</li>
+              <li>Level 3 is designed to show a hard capacity limit.</li>
+            </ul>
+
+            <div style="height:1px; background: rgba(255,255,255,0.14); margin: 12px 0;"></div>
+
+            <div style="font-weight:950; margin-bottom: 6px; color: rgba(255,255,255,0.92);">Micro goals</div>
+            <ul style="margin: 0; padding-left: 18px;">
+              <li>Keep ATP above zero as long as possible.</li>
+              <li>Use CK before ATP hits the red zone.</li>
+              <li>Save AK for moments when ADP is high but PCr is low.</li>
+            </ul>
+          </div>
+
+          <div style="height:1px; background: rgba(255,255,255,0.14); margin: 12px 0;"></div>
+
+          <div class="instruction" style="color: rgba(255,255,255,0.70);">
+            Keyboard shortcuts: <span class="kbd">Space</span> start, <span class="kbd">R</span> reset, <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> level.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3>Shift complete</h3>
+        <div class="row">
+          <button class="btn" id="playAgainBtn">Play again</button>
+          <button class="btn" id="closeOverlayBtn">Close</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="line" id="endLine">
+          ATP depleted. Maximal effort cannot be sustained.
+        </div>
+
+        <div class="summaryGrid">
+          <div class="sumCard">
+            <div class="k">Time survived</div>
+            <div class="v gold" id="sumTime">0.0s</div>
+          </div>
+          <div class="sumCard">
+            <div class="k">Work completed</div>
+            <div class="v good" id="sumWork">0</div>
+          </div>
+          <div class="sumCard">
+            <div class="k">CK uses</div>
+            <div class="v" id="sumCK">0</div>
+          </div>
+          <div class="sumCard">
+            <div class="k">AK uses</div>
+            <div class="v" id="sumAK">0</div>
+          </div>
+        </div>
+
+        <div class="line" id="coachLine" style="margin-top: 12px;">
+          What you should notice: ATP turns over fast. PCr helps briefly, but capacity is limited.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    const toast = el("toast");
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+    function pulsePop(node){
+      node.classList.remove("pop");
+      void node.offsetWidth;
+      node.classList.add("pop");
+      clearTimeout(pulsePop._t);
+      pulsePop._t = setTimeout(() => node.classList.remove("pop"), 200);
+    }
+
+    function shake(node){
+      node.classList.remove("shake");
+      void node.offsetWidth;
+      node.classList.add("shake");
+      clearTimeout(shake._t);
+      shake._t = setTimeout(() => node.classList.remove("shake"), 180);
+    }
+
+    function beep(type){
+      if (!state.soundOn) return;
+      try{
+        const ac = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        o.connect(g);
+        g.connect(ac.destination);
+
+        let f = 520, dur = 0.06, gain = 0.04;
+        if (type === "good"){ f = 680; dur = 0.10; gain = 0.06; }
+        if (type === "bad"){ f = 220; dur = 0.10; gain = 0.06; }
+        if (type === "tick"){ f = 420; dur = 0.03; gain = 0.02; }
+
+        o.frequency.value = f;
+        o.type = "sine";
+        g.gain.value = gain;
+
+        o.start();
+        setTimeout(() => { o.stop(); ac.close(); }, Math.floor(dur * 1000));
+      } catch {}
+    }
+
+    const UI = {
+      levelVal: el("levelVal"),
+      timeVal: el("timeVal"),
+      workVal: el("workVal"),
+
+      goalTag: el("goalTag"),
+      modeTag: el("modeTag"),
+
+      helpBtn: el("helpBtn"),
+      helpWrap: el("helpWrap"),
+      soundBtn: el("soundBtn"),
+      resetBtn: el("resetBtn"),
+      startBtn: el("startBtn"),
+
+      lvl1Btn: el("lvl1Btn"),
+      lvl2Btn: el("lvl2Btn"),
+      lvl3Btn: el("lvl3Btn"),
+
+      atpNum: el("atpNum"),
+      atpMaxNum: el("atpMaxNum"),
+      pcrNum: el("pcrNum"),
+      pcrMaxNum: el("pcrMaxNum"),
+      atpBar: el("atpBar"),
+      pcrBar: el("pcrBar"),
+      atpCard: el("atpCard"),
+      pcrCard: el("pcrCard"),
+
+      invATPNum: el("invATPNum"),
+      invADPNum: el("invADPNum"),
+      invPiNum: el("invPiNum"),
+      invCrNum: el("invCrNum"),
+      invAMPNum: el("invAMPNum"),
+
+      invATP: el("invATP"),
+      invADP: el("invADP"),
+      invPi: el("invPi"),
+      invCr: el("invCr"),
+      invAMP: el("invAMP"),
+
+      statusBox: el("statusBox"),
+      statusMsg: el("statusMsg"),
+      miniMsg: el("miniMsg"),
+
+      hydrolaseBtn: el("hydrolaseBtn"),
+      ckBtn: el("ckBtn"),
+      akBtn: el("akBtn"),
+      hydrolaseCool: el("hydrolaseCool"),
+      ckCool: el("ckCool"),
+      akCool: el("akCool"),
+
+      overlay: el("overlay"),
+      playAgainBtn: el("playAgainBtn"),
+      closeOverlayBtn: el("closeOverlayBtn"),
+
+      sumTime: el("sumTime"),
+      sumWork: el("sumWork"),
+      sumCK: el("sumCK"),
+      sumAK: el("sumAK"),
+      endLine: el("endLine"),
+      coachLine: el("coachLine")
+    };
+
+    function setStatus(msg, kind, mini){
+      UI.statusBox.classList.remove("good","bad","warn");
+      UI.statusBox.classList.add(kind);
+      UI.statusMsg.textContent = msg;
+      UI.miniMsg.textContent = mini || "";
+    }
+
+    const LEVELS = {
+      1: {
+        name: "Intro Burst",
+        goalSeconds: 10.0,
+        atpMax: 12,
+        pcrMax: 12,
+        drainPerSec: 2.2,   // continuous ATP hydrolysis equivalent
+        clickHydrolaseCost: 2, // extra ATP cost for "work"
+        workPerHydrolase: 3,
+        ckCooldownMs: 320,
+        akCooldownMs: 420,
+        hydCooldownMs: 240,
+        akUnlocked: false,
+        notes: "Level 1 is CK only. Feel how fast ATP disappears."
+      },
+      2: {
+        name: "Enzyme Juggle",
+        goalSeconds: 14.0,
+        atpMax: 12,
+        pcrMax: 10,
+        drainPerSec: 2.6,
+        clickHydrolaseCost: 2,
+        workPerHydrolase: 3,
+        ckCooldownMs: 300,
+        akCooldownMs: 380,
+        hydCooldownMs: 230,
+        akUnlocked: true,
+        notes: "Level 2 unlocks AK. Use 2 ADP to buy time, but AMP rises."
+      },
+      3: {
+        name: "Capacity Wall",
+        goalSeconds: 18.0,
+        atpMax: 12,
+        pcrMax: 7,
+        drainPerSec: 3.2,
+        clickHydrolaseCost: 2,
+        workPerHydrolase: 3,
+        ckCooldownMs: 280,
+        akCooldownMs: 340,
+        hydCooldownMs: 220,
+        akUnlocked: true,
+        notes: "Level 3 is designed to break you. Capacity is the point."
+      }
+    };
+
+    const state = {
+      level: 1,
+      running: false,
+      soundOn: true,
+
+      t0: 0,
+      lastTick: 0,
+      elapsed: 0,
+
+      atp: 0,
+      adp: 0,
+      pi: 0,
+      pcr: 0,
+      cr: 0,
+      amp: 0,
+
+      atpMax: 0,
+      pcrMax: 0,
+
+      work: 0,
+
+      usesCK: 0,
+      usesAK: 0,
+
+      cool: {
+        hyd: 0,
+        ck: 0,
+        ak: 0
+      }
+    };
+
+    function applyLevel(lvl){
+      state.level = lvl;
+      const L = LEVELS[lvl];
+
+      UI.levelVal.textContent = String(lvl);
+      UI.modeTag.textContent = L.name;
+      UI.goalTag.textContent = "Goal: survive " + L.goalSeconds.toFixed(1) + "s";
+
+      // style the level buttons
+      [UI.lvl1Btn, UI.lvl2Btn, UI.lvl3Btn].forEach((b, i) => {
+        b.classList.remove("primary");
+        if (i + 1 === lvl) b.classList.add("primary");
+      });
+
+      // lock or unlock AK
+      UI.akBtn.disabled = !L.akUnlocked;
+      UI.akCool.textContent = L.akUnlocked ? "Ready" : "Locked";
+
+      resetRound(true);
+      setStatus("Level set to " + L.name + ". Click Start when ready.", "warn", L.notes);
+      showToast("Level " + lvl + ": " + L.name);
+    }
+
+    function resetRound(keepLevel){
+      const L = LEVELS[state.level];
+      state.running = false;
+      state.elapsed = 0;
+      UI.timeVal.textContent = "0.0";
+      state.work = 0;
+      UI.workVal.textContent = "0";
+
+      state.atpMax = L.atpMax;
+      state.pcrMax = L.pcrMax;
+
+      state.atp = L.atpMax;
+      state.pcr = L.pcrMax;
+
+      state.adp = 0;
+      state.pi = 0;
+      state.cr = 0;
+      state.amp = 0;
+
+      state.usesCK = 0;
+      state.usesAK = 0;
+
+      state.cool.hyd = 0;
+      state.cool.ck = 0;
+      state.cool.ak = 0;
+
+      UI.atpMaxNum.textContent = String(state.atpMax);
+      UI.pcrMaxNum.textContent = String(state.pcrMax);
+
+      renderAll();
+      updateTools();
+
+      UI.startBtn.textContent = "Start";
+      UI.startBtn.disabled = false;
+      if (!keepLevel) showToast("Reset.");
+    }
+
+    function startRound(){
+      if (state.running) return;
+      state.running = true;
+      state.t0 = performance.now();
+      state.lastTick = state.t0;
+      UI.startBtn.textContent = "Running";
+      UI.startBtn.disabled = true;
+
+      setStatus("GO. ATP is draining. Keep it alive.", "warn", "Tip: CK is fastest when ADP is available.");
+      requestAnimationFrame(loop);
+    }
+
+    function endRound(reason){
+      state.running = false;
+      UI.startBtn.textContent = "Start";
+      UI.startBtn.disabled = false;
+
+      const L = LEVELS[state.level];
+
+      const metGoal = state.elapsed >= L.goalSeconds;
+      const headline = metGoal
+        ? "Nice. You survived the burst. Try again for a cleaner run."
+        : "ATP depleted. Maximal effort cannot be sustained.";
+
+      UI.endLine.textContent = headline;
+
+      UI.sumTime.textContent = state.elapsed.toFixed(1) + "s";
+      UI.sumWork.textContent = String(state.work);
+      UI.sumCK.textContent = String(state.usesCK);
+      UI.sumAK.textContent = String(state.usesAK);
+
+      const coach = metGoal
+        ? "What you should notice: CK and AK buy time, but capacity is still limited."
+        : "What you should notice: ATP turns over fast. PCr helps briefly, then you hit a limit.";
+
+      UI.coachLine.textContent = coach;
+
+      UI.overlay.classList.add("show");
+      beep(metGoal ? "good" : "bad");
+    }
+
+    function loop(now){
+      if (!state.running) return;
+
+      const L = LEVELS[state.level];
+      const dt = (now - state.lastTick) / 1000;
+      state.lastTick = now;
+
+      // Time
+      state.elapsed = (now - state.t0) / 1000;
+      UI.timeVal.textContent = state.elapsed.toFixed(1);
+
+      // Continuous ATP drain (hydrolysis). Convert ATP to ADP + Pi.
+      const drain = L.drainPerSec * dt;
+      if (drain > 0){
+        const used = Math.min(state.atp, drain);
+        state.atp -= used;
+        state.adp += used;
+        state.pi += used;
+        if (Math.random() < 0.06) beep("tick");
+      }
+
+      // Cooldowns tick down
+      tickCooldowns(now);
+
+      // Update visuals
+      renderAll();
+      updateTools();
+
+      // End condition
+      if (state.atp <= 0.0001){
+        state.atp = 0;
+        renderAll();
+        endRound("atp_zero");
+        return;
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    function tickCooldowns(now){
+      // cooldown values are timestamps until ready
+      // display remaining if not ready
+      // no need to mutate here, but we keep for clarity
+    }
+
+    function isReady(tool){
+      const now = performance.now();
+      return now >= state.cool[tool];
+    }
+
+    function setCooldown(tool, ms){
+      state.cool[tool] = performance.now() + ms;
+    }
+
+    function coolText(tool){
+      const now = performance.now();
+      const remaining = Math.max(0, state.cool[tool] - now);
+      if (remaining <= 0) return "Ready";
+      return (remaining / 1000).toFixed(1) + "s";
+    }
+
+    function updateTools(){
+      const L = LEVELS[state.level];
+
+      UI.hydrolaseBtn.disabled = !state.running || !isReady("hyd") || state.atp < 1;
+      UI.ckBtn.disabled = !state.running || !isReady("ck") || state.pcr < 1 || state.adp < 1;
+      UI.akBtn.disabled = !L.akUnlocked || !state.running || !isReady("ak") || state.adp < 2;
+
+      UI.hydrolaseCool.textContent = coolText("hyd");
+      UI.ckCool.textContent = coolText("ck");
+      UI.akCool.textContent = L.akUnlocked ? coolText("ak") : "Locked";
+    }
+
+    function renderAll(){
+      // ATP and PCr meters
+      UI.atpNum.textContent = Math.round(state.atp * 10) / 10;
+      UI.pcrNum.textContent = Math.round(state.pcr * 10) / 10;
+
+      const atpPct = (state.atpMax <= 0) ? 0 : (state.atp / state.atpMax) * 100;
+      const pcrPct = (state.pcrMax <= 0) ? 0 : (state.pcr / state.pcrMax) * 100;
+
+      UI.atpBar.style.width = clamp(atpPct, 0, 100) + "%";
+      UI.pcrBar.style.width = clamp(pcrPct, 0, 100) + "%";
+
+      UI.atpBar.classList.remove("mid","low");
+      if (atpPct < 45) UI.atpBar.classList.add("mid");
+      if (atpPct < 22) UI.atpBar.classList.add("low");
+
+      // Inventory
+      UI.invATPNum.textContent = Math.floor(state.atp);
+      UI.invADPNum.textContent = Math.floor(state.adp);
+      UI.invPiNum.textContent = Math.floor(state.pi);
+      UI.invCrNum.textContent = Math.floor(state.cr);
+      UI.invAMPNum.textContent = Math.floor(state.amp);
+
+      // Work
+      UI.workVal.textContent = String(state.work);
+    }
+
+    function popMeter(which){
+      if (which === "atp") pulsePop(UI.atpCard);
+      if (which === "pcr") pulsePop(UI.pcrCard);
+    }
+
+    function popInv(which){
+      if (which === "atp") pulsePop(UI.invATP);
+      if (which === "adp") pulsePop(UI.invADP);
+      if (which === "pi") pulsePop(UI.invPi);
+      if (which === "cr") pulsePop(UI.invCr);
+      if (which === "amp") pulsePop(UI.invAMP);
+    }
+
+    // Enzyme actions
+    function useHydrolase(){
+      if (!state.running) return;
+      const L = LEVELS[state.level];
+      if (!isReady("hyd")) return;
+
+      // Needs ATP
+      if (state.atp < 1){
+        shake(UI.atpCard);
+        setStatus("Hydrolase fizzled. Not enough ATP.", "bad", "ATP is the immediate fuel.");
+        beep("bad");
+        return;
+      }
+
+      // Extra cost: represents intentionally pushing work
+      const cost = L.clickHydrolaseCost;
+      const used = Math.min(state.atp, cost);
+      state.atp -= used;
+      state.adp += used;
+      state.pi += used;
+
+      state.work += L.workPerHydrolase;
+
+      setCooldown("hyd", L.hydCooldownMs);
+      popMeter("atp");
+      popInv("atp");
+      popInv("adp");
+      popInv("pi");
+
+      setStatus("Work! ATP used to produce contraction.", "warn", "If ATP gets low, regenerate it fast.");
+      beep("good");
+      updateTools();
+      renderAll();
+    }
+
+    function useCK(){
+      if (!state.running) return;
+      const L = LEVELS[state.level];
+      if (!isReady("ck")) return;
+
+      if (state.pcr < 1 || state.adp < 1){
+        shake(UI.pcrCard);
+        setStatus("Creatine kinase fizzled. Need PCr and ADP.", "bad", "PCr is the rapid phosphate donor.");
+        beep("bad");
+        return;
+      }
+
+      // PCr + ADP -> ATP + Cr
+      state.pcr -= 1;
+      state.adp -= 1;
+      state.atp += 1;
+      state.cr += 1;
+
+      // cap ATP at max for sanity
+      state.atp = Math.min(state.atp, state.atpMax);
+
+      state.usesCK += 1;
+      setCooldown("ck", L.ckCooldownMs);
+
+      popMeter("pcr");
+      popMeter("atp");
+      popInv("pcr");
+      popInv("adp");
+      popInv("atp");
+      popInv("cr");
+
+      setStatus("Creatine kinase hit. ATP regenerated.", "good", "This is the fastest backup system.");
+      beep("good");
+
+      updateTools();
+      renderAll();
+    }
+
+    function useAK(){
+      if (!state.running) return;
+      const L = LEVELS[state.level];
+      if (!L.akUnlocked) return;
+      if (!isReady("ak")) return;
+
+      if (state.adp < 2){
+        shake(UI.invADP);
+        setStatus("Adenylate kinase fizzled. Need 2 ADP.", "bad", "This backup uses 2 ADP to regenerate ATP.");
+        beep("bad");
+        return;
+      }
+
+      // 2 ADP -> ATP + AMP
+      state.adp -= 2;
+      state.atp += 1;
+      state.amp += 1;
+
+      state.atp = Math.min(state.atp, state.atpMax);
+
+      state.usesAK += 1;
+      setCooldown("ak", L.akCooldownMs);
+
+      popMeter("atp");
+      popInv("adp");
+      popInv("atp");
+      popInv("amp");
+
+      setStatus("Adenylate kinase hit. ATP regenerated, AMP increased.", "warn", "Helpful, but not free.");
+      beep("good");
+
+      updateTools();
+      renderAll();
+    }
+
+    // UI events
+    UI.helpBtn.addEventListener("click", () => {
+      const showing = UI.helpWrap.style.display !== "none";
+      UI.helpWrap.style.display = showing ? "none" : "block";
+      showToast(showing ? "Help hidden." : "Help shown.");
+    });
+
+    UI.soundBtn.addEventListener("click", () => {
+      state.soundOn = !state.soundOn;
+      UI.soundBtn.textContent = "Sound: " + (state.soundOn ? "On" : "Off");
+      showToast(state.soundOn ? "Sound on." : "Sound off.");
+    });
+
+    UI.resetBtn.addEventListener("click", () => {
+      UI.overlay.classList.remove("show");
+      resetRound(false);
+      setStatus("Reset. Click Start when ready.", "warn", LEVELS[state.level].notes);
+    });
+
+    UI.startBtn.addEventListener("click", () => {
+      UI.overlay.classList.remove("show");
+      startRound();
+    });
+
+    UI.lvl1Btn.addEventListener("click", () => applyLevel(1));
+    UI.lvl2Btn.addEventListener("click", () => applyLevel(2));
+    UI.lvl3Btn.addEventListener("click", () => applyLevel(3));
+
+    UI.hydrolaseBtn.addEventListener("click", useHydrolase);
+    UI.ckBtn.addEventListener("click", useCK);
+    UI.akBtn.addEventListener("click", useAK);
+
+    UI.playAgainBtn.addEventListener("click", () => {
+      UI.overlay.classList.remove("show");
+      resetRound(false);
+      startRound();
+    });
+
+    UI.closeOverlayBtn.addEventListener("click", () => UI.overlay.classList.remove("show"));
+    UI.overlay.addEventListener("click", (e) => {
+      if (e.target === UI.overlay) UI.overlay.classList.remove("show");
+    });
+
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      if (k === "r") {
+        UI.overlay.classList.remove("show");
+        resetRound(false);
+        setStatus("Reset. Click Start when ready.", "warn", LEVELS[state.level].notes);
+      }
+      if (k === " "){
+        e.preventDefault();
+        UI.overlay.classList.remove("show");
+        startRound();
+      }
+      if (k === "1") applyLevel(1);
+      if (k === "2") applyLevel(2);
+      if (k === "3") applyLevel(3);
+    });
+
+    function init(){
+      UI.soundBtn.textContent = "Sound: On";
+      UI.helpWrap.style.display = "none";
+      applyLevel(1);
+      setStatus("Choose a level and click Start. Expect chaos.", "warn", "Tip: PCr is limited. That is the whole point.");
+    }
+
+    init();
+  </script>
+</body>
+</html>
